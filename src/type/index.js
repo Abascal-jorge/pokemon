@@ -1,0 +1,1 @@
+export const OBTENER_NOMBRE = "OBTENER_NOMBRE";
