@@ -1,11 +1,12 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, Fragment } from 'react';
 import Listadopokemon from "./Listadopokemon";
 import pokemonContext from "../../context/pokemonContext";
+import Spinner from "../Spinner";
 
 const Form = () => {
 
     const PokemonContext = useContext(pokemonContext);
-    const {obtenerNombre} = PokemonContext;
+    const {resultado, error, spinner, obtenerNombre, errorDatos} = PokemonContext;
 
     //Crewando state para guatrdar el nombre del pokemon
     const [pokemon, guardarpokemon] = useState({
@@ -15,10 +16,9 @@ const Form = () => {
 
     //Funcion text box guardar nombre 
     const onChange = (e) => {
-        console.log(e.target.value);
-            guardarpokemon({
+        guardarpokemon({
             ...pokemon,
-            [e.target.name] : e.target.value
+            [e.target.name] : e.target.value.toLowerCase()
         });   
     }
 
@@ -27,13 +27,19 @@ const Form = () => {
         e.preventDefault();
         //Validar Formulario
         if(nombrep === ""){
+            errorDatos();
             return;
         }
         obtenerNombre(pokemon);
     }
 
+    //Cargando pokemon
+    const acciondatos = spinner ? <Spinner/> : <Listadopokemon resultado = {resultado}/>;
+
     return ( 
+        <Fragment>
         <form>
+            {error? <p>Los campos son Obligatorios</p>: null}
             <div>
                 <label htmlFor="nombrep">Ingresa el pokemon a buscar</label>
                 <input
@@ -44,13 +50,18 @@ const Form = () => {
                     onChange={onChange}
                     value={nombrep}
                 />
-                <button
+                 <button
                     onClick={onConsultar}
-                >Consultar</button>
+                >Consultar
+        </button>
             </div>
-            
-            <Listadopokemon/>
+            {resultado? 
+                acciondatos
+            :
+             null
+            }
         </form>
+        </Fragment>
     );
 }
  
